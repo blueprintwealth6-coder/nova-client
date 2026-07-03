@@ -1,30 +1,22 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "@/lib/api";
 import BottomNav from "@/components/BottomNav";
 
 export default function ProfilePage() {
   const [user, setUser] = useState<any>(null);
   const [videos, setVideos] = useState<any[]>([]);
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
-
   const loadProfile = async () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await axios.get(
-        "http://localhost:5000/api/user/profile",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const res = await API.get("/user/profile", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       setUser(res.data.user);
       setVideos(res.data.videos);
@@ -32,6 +24,10 @@ export default function ProfilePage() {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
 
   if (!user) {
     return (
@@ -62,8 +58,7 @@ export default function ProfilePage() {
       <div
         style={{
           height: "180px",
-          background:
-            "linear-gradient(135deg,#ff0050,#6a00ff)",
+          background: "linear-gradient(135deg,#ff0050,#6a00ff)",
         }}
       />
 
@@ -92,24 +87,23 @@ export default function ProfilePage() {
         <p style={{ color: "#bbb" }}>
           {user.bio || "No bio yet"}
         </p>
+
         <button
-  onClick={() => {
-    window.location.href = "/edit-profile";
-  }}
-  style={{
-    marginTop: "20px",
-    background: "#ff0050",
-    color: "#fff",
-    border: "none",
-    padding: "12px 30px",
-    borderRadius: "30px",
-    cursor: "pointer",
-    fontWeight: "bold",
-    fontSize: "16px",
-  }}
->
-  Edit Profile
-</button>
+          onClick={() => {
+            window.location.href = "/edit-profile";
+          }}
+          style={{
+            marginTop: "20px",
+            background: "#ff0050",
+            color: "#fff",
+            border: "none",
+            padding: "12px 30px",
+            borderRadius: "30px",
+            cursor: "pointer",
+          }}
+        >
+          Edit Profile
+        </button>
 
         <div
           style={{
@@ -118,17 +112,17 @@ export default function ProfilePage() {
             marginTop: "20px",
           }}
         >
-          <div style={{ textAlign: "center" }}>
+          <div>
             <h3>{user.followers?.length || 0}</h3>
             <span>Followers</span>
           </div>
 
-          <div style={{ textAlign: "center" }}>
+          <div>
             <h3>{user.following?.length || 0}</h3>
             <span>Following</span>
           </div>
 
-          <div style={{ textAlign: "center" }}>
+          <div>
             <h3>{videos.length}</h3>
             <span>Videos</span>
           </div>
@@ -152,69 +146,62 @@ export default function ProfilePage() {
           padding: "10px",
         }}
       >
-        ```tsx
-{videos.map((video: any) => (
-  <div
-    key={video._id}
-    style={{
-      position: "relative",
-    }}
-  >
-    <video
-      src={video.videoUrl}
-      controls
-      style={{
-        width: "100%",
-        aspectRatio: "9/16",
-        objectFit: "cover",
-      }}
-    />
+        {videos.map((video: any) => (
+          <div
+            key={video._id}
+            style={{
+              position: "relative",
+            }}
+          >
+            <video
+              src={video.videoUrl}
+              controls
+              style={{
+                width: "100%",
+                aspectRatio: "9/16",
+                objectFit: "cover",
+              }}
+            />
 
-    <button
-      onClick={async () => {
-        if (!confirm("Delete this video?")) return;
+            <button
+              onClick={async () => {
+                if (!confirm("Delete this video?")) return;
 
-        const token = localStorage.getItem("token");
+                const token = localStorage.getItem("token");
 
-        try {
-          await axios.delete(
-            `http://localhost:5000/api/video/delete/${video._id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+                try {
+                  await API.delete(`/video/delete/${video._id}`, {
+                    headers: {
+                      Authorization: `Bearer ${token}`,
+                    },
+                  });
 
-          alert("Video Deleted");
+                  setVideos((prev) =>
+                    prev.filter((v) => v._id !== video._id)
+                  );
 
-          setVideos((prev) =>
-            prev.filter((v) => v._id !== video._id)
-          );
-        } catch (err) {
-          alert("Delete Failed");
-        }
-      }}
-      style={{
-        position: "absolute",
-        top: 8,
-        right: 8,
-        background: "red",
-        color: "#fff",
-        border: "none",
-        borderRadius: "50%",
-        width: "32px",
-        height: "32px",
-        cursor: "pointer",
-      }}
-    >
-      ✕
-    </button>
-  </div>
-))}
-```
-
-     
+                  alert("Video Deleted");
+                } catch (err) {
+                  alert("Delete Failed");
+                }
+              }}
+              style={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                width: "30px",
+                height: "30px",
+                border: "none",
+                borderRadius: "50%",
+                background: "red",
+                color: "#fff",
+                cursor: "pointer",
+              }}
+            >
+              ✕
+            </button>
+          </div>
+        ))}
       </div>
 
       <BottomNav />

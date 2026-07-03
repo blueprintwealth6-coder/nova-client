@@ -1,8 +1,7 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
-import axios from "axios";
+import API from "@/lib/api";
 import Link from "next/link";
 import BottomNav from "@/components/BottomNav";
 
@@ -10,14 +9,10 @@ export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState<any[]>([]);
 
-  useEffect(() => {
-    searchUsers();
-  }, []);
-
   const searchUsers = async () => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/user/search?q=${query}`
+      const res = await API.get(
+        `/user/search?q=${query}`
       );
 
       setUsers(res.data);
@@ -25,6 +20,10 @@ export default function SearchPage() {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    searchUsers();
+  }, []);
 
   return (
     <div
@@ -73,7 +72,7 @@ export default function SearchPage() {
           marginTop: "20px",
         }}
       >
-        {users.map((user) => (
+        {users.map((user: any) => (
           <Link
             key={user._id}
             href={`/profile/${user._id}`}

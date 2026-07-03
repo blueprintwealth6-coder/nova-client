@@ -1,29 +1,26 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+import API from "@/lib/api";
 import VideoCard from "@/components/VideoCard";
 import BottomNav from "@/components/BottomNav";
 
 export default function FeedPage() {
   const [videos, setVideos] = useState<any[]>([]);
 
-  useEffect(() => {
-    loadFeed();
-  }, []);
-
+  // Load Feed
   const loadFeed = async () => {
     try {
-      const res = await axios.get(
-        "http://localhost:5000/api/video/feed"
-      );
-
+      const res = await API.get("/video/feed");
       setVideos(res.data);
     } catch (err) {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    loadFeed();
+  }, []);
 
   return (
     <div
@@ -34,7 +31,7 @@ export default function FeedPage() {
         scrollSnapType: "y mandatory",
       }}
     >
-      {videos.map((video) => (
+      {videos.map((video: any) => (
         <div
           key={video._id}
           style={{
@@ -53,4 +50,3 @@ export default function FeedPage() {
     </div>
   );
 }
-
