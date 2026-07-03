@@ -9,9 +9,17 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const login = async () => {
+    if (!email || !password) {
+      alert("Please enter email and password");
+      return;
+    }
+
     try {
+      setLoading(true);
+
       const res = await API.post("/auth/login", {
         email,
         password,
@@ -24,47 +32,98 @@ export default function LoginPage() {
 
       router.push("/feed");
     } catch (err: any) {
-      alert(err.response?.data?.message || "Login Failed");
+      console.log(err);
+
+      alert(
+        err?.response?.data?.message ||
+          "Login Failed. Please try again."
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div
       style={{
+        background: "#000",
         height: "100vh",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "#111",
       }}
     >
       <div
         style={{
-          width: 350,
+          width: "350px",
+          background: "#111",
+          padding: "30px",
+          borderRadius: "15px",
           display: "flex",
           flexDirection: "column",
-          gap: 12,
+          gap: "15px",
         }}
       >
-        <h1 style={{ color: "white" }}>Login</h1>
+        <h1
+          style={{
+            color: "#fff",
+            textAlign: "center",
+          }}
+        >
+          Login
+        </h1>
 
         <input
+          type="email"
           placeholder="Email"
+          value={email}
           onChange={(e) => setEmail(e.target.value)}
+          style={{
+            padding: "12px",
+            borderRadius: "8px",
+            border: "none",
+          }}
         />
 
         <input
           type="password"
           placeholder="Password"
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
+          style={{
+            padding: "12px",
+            borderRadius: "8px",
+            border: "none",
+          }}
         />
 
+        <button
+          onClick={login}
+          disabled={loading}
+          style={{
+            background: "#ff0050",
+            color: "#fff",
+            border: "none",
+            padding: "12px",
+            borderRadius: "8px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+        >
+          {loading ? "Logging in..." : "Login"}
+        </button>
 
-localStorage.setItem("token", res.data.token);
-
-
-
-        <button onClick={login}>Login</button>
+        <button
+          onClick={() => router.push("/signup")}
+          style={{
+            background: "transparent",
+            color: "#00d4ff",
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          Don't have an account? Sign Up
+        </button>
       </div>
     </div>
   );
