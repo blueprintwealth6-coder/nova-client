@@ -1,313 +1,173 @@
 
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import axios from "axios";
+import { useState } from "react";
+import {
+  Heart,
+  MessageCircle,
+  Share2,
+  Star,
+} from "lucide-react";
 
 export default function VideoCard({ video }: any) {
-  const videoRef = useRef<HTMLVideoElement>(null);
 
+  const [liked, setLiked] = useState(false);
+  const [showHeart, setShowHeart] = useState(false);
   const [likes, setLikes] = useState(video.likes?.length || 0);
-  const [comment, setComment] = useState("");
-  const [saved, setSaved] = useState(false);
-  const [views, setViews] = useState(video.views || 0);
 
-  // ================= LIKE =================
-
-  const likeVideo = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.put(
-        `http://localhost:5000/api/video/like/${video._id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setLikes(res.data.likes);
-    } catch (err) {
-      console.log(err);
+  const handleLike = () => {
+    if (!liked) {
+      setLiked(true);
+      setLikes((prev: number) => prev + 1);
     }
+  
+    setShowHeart(true);
+  
+    setTimeout(() => {
+      setShowHeart(false);
+    }, 700);
   };
-
-  // ================= COMMENT =================
-
-  const addComment = async () => {
-    if (!comment.trim()) return;
-
-    try {
-      const token = localStorage.getItem("token");
-
-      await axios.post(
-        `http://localhost:5000/api/video/comment/${video._id}`,
-        {
-          text: comment,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      alert("Comment Added");
-      setComment("");
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  // ================= SHARE =================
-
-  const shareVideo = () => {
-    navigator.clipboard.writeText(window.location.href);
-
-    alert("Video Link Copied");
-  };
-
-  // ================= SAVE =================
-
-  const saveVideo = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.put(
-        `http://localhost:5000/api/video/save/${video._id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      setSaved(res.data.saved);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  // ================= VIEW =================
-
-  useEffect(() => {
-    const addView = async () => {
-      try {
-        const res = await axios.put(
-          `http://localhost:5000/api/video/view/${video._id}`
-        );
-
-        setViews(res.data.views);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    addView();
-  }, []);
-
-  // ================= AUTOPLAY =================
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!videoRef.current) return;
-
-        if (entry.isIntersecting) {
-          videoRef.current.play();
-        } else {
-          videoRef.current.pause();
-        }
-      },
-      {
-        threshold: 0.7,
-      }
-    );
-
-    if (videoRef.current) {
-      observer.observe(videoRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
 
   return (
 
-
     <div
       style={{
-        width: "380px",
+        position: "relative",
+        width: "420px",
         height: "90vh",
-        background: "#111",
         borderRadius: "20px",
         overflow: "hidden",
-        position: "relative",
+        background: "#111",
       }}
     >
-      {/* ================= VIDEO ================= */}
-
       <video
-        ref={videoRef}
-        src={video.videoUrl}
-        loop
-        muted
-        playsInline
-        onClick={() => {
-          if (!videoRef.current) return;
-
-          if (videoRef.current.paused) {
-            videoRef.current.play();
-          } else {
-            videoRef.current.pause();
-          }
-        }}
-        style={{
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          cursor: "pointer",
-        }}
-      />
-
-      {/* ================= USER INFO ================= */}
-
+    src={video.videoUrl}
+    controls
+    autoPlay
+    loop
+    onDoubleClick={handleLike}
+    style={{
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      cursor: "pointer",
+    }}
+  />
+      {/* Gradient */}
       <div
         style={{
           position: "absolute",
-          left: "20px",
-          bottom: "120px",
+          bottom: 0,
+          width: "100%",
+          height: "220px",
+          background:
+            "linear-gradient(transparent, rgba(0,0,0,0.9))",
+        }}
+      />
+
+      {/* User Info */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: "150px",
+          left: "18px",
           color: "#fff",
-          width: "70%",
         }}
       >
         <h3
-          onClick={() => {
-            window.location.href = `/user/${video.user._id}`;
-          }}
           style={{
-            cursor: "pointer",
-            marginBottom: "10px",
+            margin: 0,
+            fontSize: "22px",
+            fontWeight: "bold",
           }}
         >
-          @{video.user?.username}
+          @{video.user?.username || "user"}
         </h3>
-
-        <p>{video.caption}</p>
 
         <p
           style={{
-            color: "#bbb",
             marginTop: "8px",
-            fontSize: "14px",
+            color: "#ddd",
           }}
         >
-          👁 {views} Views
+          {video.caption}
+        </p>
+
+        <p
+          style={{
+            color: "#888",
+          }}
+        >
+          👁 {video.views || 0} Views
         </p>
       </div>
 
-      {/* ================= RIGHT BUTTONS ================= */}
-
+      {/* Right Icons */}
       <div
         style={{
           position: "absolute",
           right: "15px",
-          bottom: "150px",
+          bottom: "130px",
           display: "flex",
           flexDirection: "column",
-          gap: "15px",
+          alignItems: "center",
+          gap: "20px",
+          color: "#18b6ff",
         }}
       >
-        {/* LIKE */}
+       <Heart
+  size={34}
+  onClick={handleLike}
+  color="#18b6ff"
+  fill={liked ? "#18b6ff" : "transparent"}
+  style={{
+    cursor: "pointer",
+    transition: ".3s",
+  }}
+/>
+          <span>{likes}</span>
 
-        <button
-          onClick={likeVideo}
-          style={{
-            width: "60px",
-            height: "60px",
-            borderRadius: "50%",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "22px",
-          }}
-        >
-          ❤️
-          <br />
-          {likes}
-        </button>
+        <MessageCircle size={34} />
+        <span>{video.comments?.length || 0}</span>
 
-        {/* SHARE */}
+        <Share2 size={34} />
+        <span>0</span>
 
-        <button
-          onClick={shareVideo}
-          style={{
-            width: "60px",
-            height: "60px",
-            borderRadius: "50%",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "22px",
-          }}
-        >
-          📤
-        </button>
-
-        {/* SAVE */}
-
-        <button
-          onClick={saveVideo}
-          style={{
-            width: "60px",
-            height: "60px",
-            borderRadius: "50%",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "22px",
-          }}
-        >
-          {saved ? "⭐" : "☆"}
-        </button>
-
+        <Star size={34} />
+        <span>0</span>
       </div>
 
-      {/* ================= COMMENT BOX ================= */}
-
+      {/* Comment Box */}
       <div
         style={{
           position: "absolute",
-          bottom: "0",
-          left: "0",
-          width: "100%",
+          bottom: "20px",
+          left: "15px",
+          right: "15px",
           display: "flex",
-          background: "rgba(0,0,0,0.6)",
-          padding: "10px",
-          boxSizing: "border-box",
+          gap: "10px",
         }}
       >
         <input
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
           placeholder="Write a comment..."
           style={{
             flex: 1,
-            padding: "12px",
+            padding: "14px",
+            borderRadius: "10px",
             border: "none",
             outline: "none",
-            borderRadius: "8px",
+            background: "#222",
+            color: "#fff",
           }}
         />
 
         <button
-          onClick={addComment}
           style={{
-            marginLeft: "10px",
-            padding: "12px 20px",
-            background: "#ff0050",
+            width: "80px",
+            background: "#18b6ff",
             color: "#fff",
             border: "none",
-            borderRadius: "8px",
+            borderRadius: "10px",
             cursor: "pointer",
             fontWeight: "bold",
           }}
@@ -318,4 +178,3 @@ export default function VideoCard({ video }: any) {
     </div>
   );
 }
-
