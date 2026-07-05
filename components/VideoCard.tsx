@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import API from "@/lib/api";
 import {
   Heart,
   MessageCircle,
@@ -26,6 +27,25 @@ export default function VideoCard({ video }: any) {
     setTimeout(() => {
       setShowHeart(false);
     }, 700);
+  };
+
+  const handleSave = async () => {
+    try {
+      await API.put(
+        `/video/save/${video._id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+  
+      alert("Video Saved ⭐");
+    } catch (err) {
+      console.log(err);
+      alert("Please login first");
+    }
   };
 
   return (
@@ -133,8 +153,17 @@ export default function VideoCard({ video }: any) {
         <Share2 size={34} />
         <span>0</span>
 
-        <Star size={34} />
-        <span>0</span>
+        <Star
+  size={34}
+  color="#18b6ff"
+  style={{
+    cursor: "pointer",
+  }}
+  onClick={handleSave}
+/>
+
+<span>Save</span>
+
       </div>
 
       {/* Comment Box */}
