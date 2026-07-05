@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import API from "@/lib/api";
 import VideoCard from "@/components/VideoCard";
 import BottomNav from "@/components/BottomNav";
