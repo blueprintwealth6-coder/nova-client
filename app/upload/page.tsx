@@ -1,63 +1,61 @@
-
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
+import API from "@/lib/api";
 
 export default function UploadPage() {
   const [caption, setCaption] = useState("");
   const [video, setVideo] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const uploadVideo = async () => {
-    console.log("Upload button clicked");
-
     if (!video) {
       alert("Please select a video");
       return;
     }
 
     const token = localStorage.getItem("token");
-    console.log("TOKEN:", token);
+
+    if (!token) {
+      alert("Please login first");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("video", video);
     formData.append("caption", caption);
 
     try {
-      console.log("Sending request...");
+      setLoading(true);
 
-      const res = await axios.post(
-        "http://localhost:5000/api/video/upload",
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log(res.data);
+      const res = await API.post("/video/upload", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       alert(res.data.message);
 
       setCaption("");
       setVideo(null);
     } catch (err: any) {
-      console.log("Upload Error:", err);
-      console.log("Response:", err.response);
+      console.log(err);
 
       alert(
         err.response?.data?.message ||
           err.message ||
           "Upload Failed"
       );
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div
       style={{
-        backgroundColor: "#000",
+        background: "#000",
         minHeight: "100vh",
         display: "flex",
         justifyContent: "center",
@@ -66,7 +64,7 @@ export default function UploadPage() {
     >
       <div
         style={{
-          width: "400px",
+          width: "420px",
           display: "flex",
           flexDirection: "column",
           gap: "15px",
@@ -76,6 +74,7 @@ export default function UploadPage() {
           style={{
             color: "#fff",
             textAlign: "center",
+            fontSize: "30px",
           }}
         >
           Upload Video
@@ -85,7 +84,7 @@ export default function UploadPage() {
           type="file"
           accept="video/*"
           onChange={(e) => {
-            if (e.target.files && e.target.files.length > 0) {
+            if (e.target.files?.length) {
               setVideo(e.target.files[0]);
             }
           }}
@@ -93,30 +92,31 @@ export default function UploadPage() {
 
         <input
           type="text"
-          placeholder="Enter Caption"
+          placeholder="Video Caption"
           value={caption}
           onChange={(e) => setCaption(e.target.value)}
           style={{
-            padding: "10px",
+            padding: "12px",
+            borderRadius: "8px",
           }}
         />
 
         <button
           onClick={uploadVideo}
+          disabled={loading}
           style={{
-            padding: "12px",
-            backgroundColor: "#ff0050",
+            padding: "14px",
+            background: "#18b6ff",
             color: "#fff",
             border: "none",
+            borderRadius: "8px",
             cursor: "pointer",
-            borderRadius: "5px",
             fontWeight: "bold",
           }}
         >
-          Upload Video
+          {loading ? "Uploading..." : "Upload Video"}
         </button>
       </div>
     </div>
   );
 }
-
