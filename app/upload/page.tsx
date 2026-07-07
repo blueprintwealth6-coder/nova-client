@@ -18,7 +18,7 @@ export default function UploadPage() {
 
   const uploadVideo = async () => {
     if (!video) {
-      alert("Please select a video");
+      alert("Please Select Video");
       return;
     }
 
@@ -61,15 +61,15 @@ export default function UploadPage() {
       setHashtags("");
       setCategory("Other");
       setVisibility("public");
+
       setVideo(null);
       setPreview("");
       setProgress(0);
-
     } catch (err: any) {
       alert(
         err.response?.data?.message ||
-        err.message ||
-        "Upload Failed"
+          err.message ||
+          "Upload Failed"
       );
     } finally {
       setUploading(false);
@@ -79,178 +79,196 @@ export default function UploadPage() {
   return (
     <div
       style={{
-        background: "#000",
         minHeight: "100vh",
+        background: "#000",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        padding: "40px",
+        padding: "50px",
       }}
     >
       <div
         style={{
           width: "100%",
-          maxWidth: "1200px",
+          maxWidth: "1250px",
           display: "flex",
-          gap: "40px",
+          gap: "50px",
+          background: "#111",
+          padding: "40px",
+          borderRadius: "25px",
+          boxShadow: "0 0 30px rgba(255,0,80,.2)",
         }}
-     >        {/* Left Side - Video Preview */}
-     <div
-       style={{
-         flex: 1,
-         display: "flex",
-         justifyContent: "center",
-         alignItems: "center",
-       }}
-     >
-       {preview ? (
-         <video
-           src={preview}
-           controls
-           autoPlay
-           loop
-           style={{
-             width: "320px",
-             height: "600px",
-             borderRadius: "20px",
-             objectFit: "cover",
-             background: "#111",
-             border: "2px solid #333",
-           }}
-         />
-       ) : (
-         <div
-           style={{
-             width: "320px",
-             height: "600px",
-             borderRadius: "20px",
-             background: "#111",
-             display: "flex",
-             justifyContent: "center",
-             alignItems: "center",
-             color: "#888",
-             fontSize: "20px",
-           }}
-         >
-           Video Preview
-         </div>
-       )}
-     </div>
+      >
+        {/* LEFT SIDE */}
 
-     {/* Right Side - Upload Form */}
-     <div
-       style={{
-         flex: 1,
-         display: "flex",
-         flexDirection: "column",
-         gap: "18px",
-       }}
-     >
-       <h1
-         style={{
-           color: "#fff",
-           fontSize: "35px",
-           marginBottom: "10px",
-         }}
-       >
-         Upload Video
-       </h1>
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {preview ? (
+            <video
+              src={preview}
+              controls
+              autoPlay
+              loop
+              style={{
+                width: "340px",
+                height: "620px",
+                objectFit: "cover",
+                borderRadius: "25px",
+                border: "3px solid #ff0050",
+                background: "#000",
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                width: "340px",
+                height: "620px",
+                borderRadius: "25px",
+                border: "3px dashed #444",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                color: "#777",
+                fontSize: "22px",
+                background: "#000",
+              }}
+            >
+              Video Preview
+            </div>
+          )}
+        </div>
 
-       <input
-         type="file"
-         accept="video/*"
-         onChange={(e) => {
-           if (e.target.files && e.target.files.length > 0) {
-             const file = e.target.files[0];
-             setVideo(file);
-             setPreview(URL.createObjectURL(file));
-           }
-         }}
-       />
+        {/* RIGHT SIDE */}
 
-       <input
-         type="text"
-         placeholder="Video Title"
-         value={title}
-         onChange={(e) => setTitle(e.target.value)}
-         style={{
-           padding: "14px",
-           borderRadius: "10px",
-           border: "none",
-           fontSize: "16px",
-         }}
-       />
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            gap: "18px",
+          }}
+        >
+          <h1
+            style={{
+              color: "#fff",
+              fontSize: "38px",
+              marginBottom: "10px",
+            }}
+          >
+            Upload New Video
+          </h1>
 
-       <textarea
-         placeholder="Video Description"
-         value={description}
-         onChange={(e) => setDescription(e.target.value)}
-         rows={5}
-         style={{
-           padding: "14px",
-           borderRadius: "10px",
-           border: "none",
-           resize: "none",
-           fontSize: "15px",
-         }}
-       />
+          <input
+            type="file"
+            accept="video/*"
+            onChange={(e) => {
+              if (e.target.files && e.target.files.length > 0) {
+                const file = e.target.files[0];
 
-       <input
-         type="text"
-         placeholder="#AI,#Funny,#Football"
-         value={hashtags}
-         onChange={(e) => setHashtags(e.target.value)}
-         style={{
-           padding: "14px",
-           borderRadius: "10px",
-           border: "none",
-         }}
-       />
+                setVideo(file);
 
-       <select
-         value={category}
-         onChange={(e) => setCategory(e.target.value)}
-         style={{
-           padding: "14px",
-           borderRadius: "10px",
-         }}
-       >
-         <option>AI</option>
-         <option>Funny</option>
-         <option>Football</option>
-         <option>Cricket</option>
-         <option>Gaming</option>
-         <option>Music</option>
-         <option>Education</option>
-         <option>Sports</option>
-         <option>Technology</option>
-         <option>Other</option>
-       </select>
+                setPreview(URL.createObjectURL(file));
+              }
+            }}
+          />
+<input
+  type="text"
+  placeholder="Video Title"
+  value={title}
+  onChange={(e) => setTitle(e.target.value)}
+  style={{
+    padding: "15px",
+    borderRadius: "10px",
+    border: "none",
+    fontSize: "16px",
+    outline: "none",
+  }}
+/>
 
-       <select
-         value={visibility}
-         onChange={(e) => setVisibility(e.target.value)}
-         style={{
-           padding: "14px",
-           borderRadius: "10px",
-         }}
-       >
-         <option value="public">🌍 Public</option>
-         <option value="private">🔒 Private</option>
-       </select></div> 
-       {uploading && (
+          <textarea
+            placeholder="Video Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={5}
+            style={{
+              padding: "15px",
+              borderRadius: "10px",
+              border: "none",
+              resize: "none",
+              fontSize: "16px",
+              outline: "none",
+            }}
+          />
+
+          <input
+            type="text"
+            placeholder="#AI,#Funny,#Gaming"
+            value={hashtags}
+            onChange={(e) => setHashtags(e.target.value)}
+            style={{
+              padding: "15px",
+              borderRadius: "10px",
+              border: "none",
+              fontSize: "16px",
+              outline: "none",
+            }}
+          />
+
+          <select
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            style={{
+              padding: "15px",
+              borderRadius: "10px",
+              border: "none",
+              fontSize: "16px",
+            }}
+          >
+            <option>AI</option>
+            <option>Funny</option>
+            <option>Gaming</option>
+            <option>Sports</option>
+            <option>Football</option>
+            <option>Cricket</option>
+            <option>Music</option>
+            <option>Education</option>
+            <option>Technology</option>
+            <option>Other</option>
+          </select>
+
+          <select
+            value={visibility}
+            onChange={(e) => setVisibility(e.target.value)}
+            style={{
+              padding: "15px",
+              borderRadius: "10px",
+              border: "none",
+              fontSize: "16px",
+            }}
+          >
+            <option value="public">🌍 Public</option>
+            <option value="private">🔒 Private</option>
+          </select>
+          {uploading && (
             <div
               style={{
                 width: "100%",
                 background: "#333",
                 borderRadius: "20px",
                 overflow: "hidden",
+                height: "12px",
               }}
             >
               <div
                 style={{
                   width: `${progress}%`,
-                  height: "10px",
+                  height: "12px",
                   background: "#ff0050",
                   transition: "0.3s",
                 }}
@@ -258,24 +276,37 @@ export default function UploadPage() {
             </div>
           )}
 
+          {uploading && (
+            <div
+              style={{
+                color: "#fff",
+                fontSize: "16px",
+                fontWeight: "bold",
+              }}
+            >
+              Uploading... {progress}%
+            </div>
+          )}
+
           <button
             onClick={uploadVideo}
             disabled={uploading}
             style={{
-              padding: "15px",
-              background: "#ff0050",
+              padding: "16px",
+              background: uploading ? "#666" : "#ff0050",
               color: "#fff",
               border: "none",
-              borderRadius: "10px",
-              cursor: "pointer",
+              borderRadius: "12px",
+              cursor: uploading ? "not-allowed" : "pointer",
               fontSize: "18px",
               fontWeight: "bold",
+              transition: "0.3s",
             }}
           >
-            {uploading ? `Uploading ${progress}%` : "Upload Video"}
+            {uploading ? "Uploading..." : "Upload Video"}
           </button>
-        </div>
-      </div>
+          </div> {/* RIGHT SIDE */}
+      </div> {/* MAIN CARD */}
     </div>
   );
 }
