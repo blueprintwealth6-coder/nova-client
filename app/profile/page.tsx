@@ -2,43 +2,53 @@
 
 import { useEffect, useState } from "react";
 import API from "@/lib/api";
-import BottomNav from "@/components/BottomNav";
 
 export default function ProfilePage() {
-  const [user, setUser] = useState<any>(null);
+
   const [videos, setVideos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const loadProfile = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      const res = await API.get("/user/profile", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setUser(res.data.user);
-      setVideos(res.data.videos);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const [user, setUser] = useState<any>({
+    username: "",
+    profilePic: "",
+  });
 
   useEffect(() => {
     loadProfile();
   }, []);
 
-  if (!user) {
+  const loadProfile = async () => {
+    try {
+
+      const token = localStorage.getItem("token");
+
+      const res = await API.get("/video/my-videos", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setVideos(res.data.videos);
+
+      if (res.data.videos.length > 0) {
+        setUser(res.data.videos[0].user);
+      }
+
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
     return (
       <div
         style={{
-          background: "#000",
           color: "#fff",
-          height: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
+          textAlign: "center",
+          padding: "50px",
+          fontSize: "22px",
         }}
       >
         Loading...
@@ -49,162 +59,180 @@ export default function ProfilePage() {
   return (
     <div
       style={{
-        background: "#000",
         color: "#fff",
-        minHeight: "100vh",
-        paddingBottom: "90px",
+        padding: "30px",
+      }}
+    >      {/* Profile Header */}
+
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "30px",
+        marginBottom: "40px",
       }}
     >
-      <div
+
+      <img
+        src={
+          user.profilePic ||
+          "https://i.pravatar.cc/200"
+        }
+        alt="profile"
         style={{
-          height: "180px",
-          background: "linear-gradient(135deg,#ff0050,#6a00ff)",
+          width: "130px",
+          height: "130px",
+          borderRadius: "50%",
+          objectFit: "cover",
+          border: "4px solid #18b6ff",
         }}
       />
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          marginTop: "-60px",
-        }}
-      >
-        <img
-          src={user.profilePic || "https://placehold.co/120x120"}
-          alt="Profile"
+      <div>
+
+        <h1
           style={{
-            width: "120px",
-            height: "120px",
-            borderRadius: "50%",
-            border: "4px solid #000",
-            objectFit: "cover",
+            margin: 0,
+            fontSize: "38px",
           }}
-        />
+        >
+          @{user.username}
+        </h1>
 
-        <h2>{user.username}</h2>
+        <div
+          style={{
+            display: "flex",
+            gap: "35px",
+            marginTop: "20px",
+            fontSize: "18px",
+          }}
+        >
 
-        <p style={{ color: "#bbb" }}>
-          {user.bio || "No bio yet"}
-        </p>
+          <div>
+            <strong>{videos.length}</strong>
+            <br />
+            Videos
+          </div>
+
+          <div>
+            <strong>0</strong>
+            <br />
+            Followers
+          </div>
+
+          <div>
+            <strong>0</strong>
+            <br />
+            Following
+          </div>
+
+        </div>
 
         <button
-          onClick={() => {
-            window.location.href = "/edit-profile";
-          }}
           style={{
-            marginTop: "20px",
-            background: "#ff0050",
+            marginTop: "25px",
+            background: "#18b6ff",
             color: "#fff",
             border: "none",
-            padding: "12px 30px",
-            borderRadius: "30px",
+            padding: "12px 35px",
+            borderRadius: "10px",
             cursor: "pointer",
+            fontWeight: "bold",
+            fontSize: "16px",
           }}
         >
           Edit Profile
         </button>
 
-        <div
-          style={{
-            display: "flex",
-            gap: "40px",
-            marginTop: "20px",
-          }}
-        >
-          <div>
-            <h3>{user.followers?.length || 0}</h3>
-            <span>Followers</span>
-          </div>
-
-          <div>
-            <h3>{user.following?.length || 0}</h3>
-            <span>Following</span>
-          </div>
-
-          <div>
-            <h3>{videos.length}</h3>
-            <span>Videos</span>
-          </div>
-        </div>
       </div>
 
-      <h2
-        style={{
-          marginLeft: "20px",
-          marginTop: "40px",
-        }}
-      >
-        My Videos
-      </h2>
+    </div>
 
-      <div
+    <hr
+      style={{
+        borderColor: "#222",
+        marginBottom: "25px",
+      }}
+    />
+
+    <h2
+      style={{
+        marginBottom: "20px",
+      }}
+    >
+      Uploaded Videos
+    </h2>
+    <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3,1fr)",
-          gap: "5px",
-          padding: "10px",
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: "10px",
         }}
       >
-        {videos.map((video: any) => (
+        {videos.map((video) => (
           <div
             key={video._id}
+            onClick={() => {
+              window.location.href = `/watch/${video._id}`;
+            }}
             style={{
               position: "relative",
+              cursor: "pointer",
+              borderRadius: "12px",
+              overflow: "hidden",
+              background: "#111",
             }}
           >
             <video
               src={video.videoUrl}
-              controls
+              muted
+              playsInline
               style={{
                 width: "100%",
-                aspectRatio: "9/16",
+                height: "260px",
                 objectFit: "cover",
               }}
             />
 
-            <button
-              onClick={async () => {
-                if (!confirm("Delete this video?")) return;
-
-                const token = localStorage.getItem("token");
-
-                try {
-                  await API.delete(`/video/delete/${video._id}`, {
-                    headers: {
-                      Authorization: `Bearer ${token}`,
-                    },
-                  });
-
-                  setVideos((prev) =>
-                    prev.filter((v) => v._id !== video._id)
-                  );
-
-                  alert("Video Deleted");
-                } catch (err) {
-                  alert("Delete Failed");
-                }
-              }}
+            <div
               style={{
                 position: "absolute",
-                top: 8,
-                right: 8,
-                width: "30px",
-                height: "30px",
-                border: "none",
-                borderRadius: "50%",
-                background: "red",
+                bottom: 0,
+                width: "100%",
+                background:
+                  "linear-gradient(transparent, rgba(0,0,0,.9))",
+                padding: "10px",
                 color: "#fff",
-                cursor: "pointer",
               }}
             >
-              ✕
-            </button>
+              <div
+                style={{
+                  fontSize: "14px",
+                  fontWeight: "bold",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {video.title}
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginTop: "6px",
+                  fontSize: "13px",
+                  color: "#ddd",
+                }}
+              >
+                <span>▶ {video.views || 0}</span>
+                <span>❤️ {video.likes?.length || 0}</span>
+              </div>
+            </div>
           </div>
         ))}
       </div>
-
-      <BottomNav />
     </div>
   );
 }
