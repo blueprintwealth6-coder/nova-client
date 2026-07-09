@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-import Sidebar from "./Sidebar";
+import Sidebar from "../components/Sidebar";
 
 export const metadata: Metadata = {
   title: "NOVA",
@@ -29,7 +29,6 @@ export default function RootLayout({
           style={{
             marginLeft: "260px",
             minHeight: "100vh",
-            background: "#000",
           }}
         >
           {children}

@@ -9,18 +9,36 @@ import {
   Bookmark,
 } from "lucide-react";
 
-export default function VideoCard({ video }: any) {
+type VideoProps = {
+  video: any;
+};
+
+export default function VideoCard({ video }: VideoProps) {
+
+  // Safety check
+  if (!video) {
+    return null;
+  }
+
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [likes, setLikes] = useState(video.likes?.length || 0);
+
+  const [likes, setLikes] = useState(
+    video?.likes?.length ?? 0
+  );
+
   const [showHeart, setShowHeart] = useState(false);
 
-  // Play only when visible
+  // Auto Play
   useEffect(() => {
+
+    if (!videoRef.current) return;
+
     const observer = new IntersectionObserver(
       ([entry]) => {
+
         if (!videoRef.current) return;
 
         if (entry.isIntersecting) {
@@ -28,19 +46,21 @@ export default function VideoCard({ video }: any) {
         } else {
           videoRef.current.pause();
         }
+
       },
       {
         threshold: 0.7,
       }
     );
 
-    if (videoRef.current) observer.observe(videoRef.current);
+    observer.observe(videoRef.current);
 
     return () => observer.disconnect();
-  }, []);
 
+  }, []);
   // Like Video
   const handleLike = async () => {
+
     if (!liked) {
       setLiked(true);
       setLikes((prev: number) => prev + 1);
@@ -53,10 +73,11 @@ export default function VideoCard({ video }: any) {
     }
 
     try {
+
       const token = localStorage.getItem("token");
 
       await API.put(
-        `/video/like/${video._id}`,
+        `/video/like/${video?._id}`,
         {},
         {
           headers: {
@@ -64,18 +85,22 @@ export default function VideoCard({ video }: any) {
           },
         }
       );
+
     } catch (err) {
       console.log(err);
     }
+
   };
 
   // Save Video
   const handleSave = async () => {
+
     try {
+
       const token = localStorage.getItem("token");
 
       await API.put(
-        `/video/save/${video._id}`,
+        `/video/save/${video?._id}`,
         {},
         {
           headers: {
@@ -85,12 +110,15 @@ export default function VideoCard({ video }: any) {
       );
 
       setSaved(!saved);
+
     } catch (err) {
       console.log(err);
     }
+
   };
 
   return (
+
     <div
       style={{
         position: "relative",
@@ -103,7 +131,7 @@ export default function VideoCard({ video }: any) {
     >
       <video
         ref={videoRef}
-        src={video.videoUrl}
+        src={video?.videoUrl}
         loop
         controls
         playsInline
@@ -125,19 +153,21 @@ export default function VideoCard({ video }: any) {
             transform: "translate(-50%,-50%)",
             fontSize: "90px",
             color: "#18b6ff",
+            animation: "pop .6s ease",
           }}
         >
           ❤️
         </div>
       )}
 
-      {/* Gradient */}
+      {/* Bottom Gradient */}
       <div
         style={{
           position: "absolute",
+          left: 0,
+          right: 0,
           bottom: 0,
-          width: "100%",
-          height: "230px",
+          height: "250px",
           background:
             "linear-gradient(transparent, rgba(0,0,0,.95))",
         }}
@@ -147,32 +177,61 @@ export default function VideoCard({ video }: any) {
       <div
         style={{
           position: "absolute",
-          bottom: "140px",
           left: "18px",
+          bottom: "140px",
           color: "#fff",
+          width: "75%",
         }}
       >
         <h3
           style={{
             margin: 0,
             fontSize: "22px",
+            fontWeight: "bold",
           }}
         >
-          @{video.user?.username}
+          @{video?.user?.username || "Unknown"}
         </h3>
 
-        <p>{video.caption}</p>
+        <h4
+          style={{
+            marginTop: "10px",
+            marginBottom: "8px",
+            fontSize: "18px",
+          }}
+        >
+          {video?.title}
+        </h4>
 
         <p
           style={{
-            color: "#888",
+            color: "#ddd",
+            fontSize: "15px",
+            lineHeight: "22px",
           }}
         >
-          👁 {video.views || 0} Views
+          {video?.description}
+        </p>
+
+        <p
+          style={{
+            color: "#18b6ff",
+            marginTop: "8px",
+          }}
+        >
+          {(video?.hashtags || []).join(" ")}
+        </p>
+
+        <p
+          style={{
+            color: "#999",
+            marginTop: "8px",
+          }}
+        >
+          👁 {video?.views || 0} Views
         </p>
       </div>
-
-      {/* Right Icons */}
+      {/* Right Side Icons */}
       <div
         style={{
           position: "absolute",
@@ -192,7 +251,9 @@ export default function VideoCard({ video }: any) {
           style={{ cursor: "pointer" }}
         />
 
-        <span style={{ color: "#fff" }}>{likes}</span>
+        <span style={{ color: "#fff" }}>
+          {likes}
+        </span>
 
         <MessageCircle
           size={34}
@@ -200,15 +261,18 @@ export default function VideoCard({ video }: any) {
         />
 
         <span style={{ color: "#fff" }}>
-          {video.comments?.length || 0}
+          {video?.comments?.length || 0}
         </span>
 
         <Share2
           size={34}
           color="#18b6ff"
+          style={{ cursor: "pointer" }}
         />
 
-        <span style={{ color: "#fff" }}>0</span>
+        <span style={{ color: "#fff" }}>
+          0
+        </span>
 
         <Bookmark
           size={34}
@@ -223,14 +287,15 @@ export default function VideoCard({ video }: any) {
       <div
         style={{
           position: "absolute",
-          bottom: "20px",
           left: "15px",
           right: "15px",
+          bottom: "20px",
           display: "flex",
           gap: "10px",
         }}
       >
         <input
+          type="text"
           placeholder="Write a comment..."
           style={{
             flex: 1,
@@ -246,10 +311,10 @@ export default function VideoCard({ video }: any) {
         <button
           style={{
             width: "90px",
-            background: "#18b6ff",
             border: "none",
-            color: "#fff",
             borderRadius: "10px",
+            background: "#18b6ff",
+            color: "#fff",
             fontWeight: "bold",
             cursor: "pointer",
           }}
@@ -257,6 +322,7 @@ export default function VideoCard({ video }: any) {
           Send
         </button>
       </div>
+
     </div>
   );
 }
