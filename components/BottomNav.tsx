@@ -1,52 +1,70 @@
+
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  House,
+  Search,
+  Upload,
+  User,
+  Bell,
+  Settings,
+} from "lucide-react";
 
 export default function BottomNav() {
   const pathname = usePathname();
 
-  const items = [
+  const menu = [
     {
-      href: "/feed",
-      icon: "🏠",
       name: "Home",
+      href: "/feed",
+      icon: <House size={28} />,
     },
     {
-      href: "/search",
-      icon: "🔍",
       name: "Search",
+      href: "/search",
+      icon: <Search size={28} />,
     },
     {
-      href: "/upload",
-      icon: "➕",
       name: "Upload",
+      href: "/upload",
+      icon: <Upload size={28} />,
     },
     {
-      href: "/profile",
-      icon: "👤",
+      name: "Alerts",
+      href: "/notifications",
+      icon: <Bell size={28} />,
+    },
+    {
       name: "Profile",
+      href: "/profile",
+      icon: <User size={28} />,
+    },
+    {
+      name: "Settings",
+      href: "/settings",
+      icon: <Settings size={28} />,
     },
   ];
 
   return (
-    <div
+    <aside
       style={{
         position: "fixed",
         right: 0,
         top: 0,
-        width: "110px",
+        width: "120px",
         height: "100vh",
-        background: "#050816",
-        borderLeft: "1px solid #1b2a45",
+        background: "#07111f",
+        borderLeft: "1px solid #12395d",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        alignItems: "center",
         zIndex: 9999,
       }}
     >
-      {items.map((item) => {
+      {menu.map((item) => {
         const active = pathname === item.href;
 
         return (
@@ -54,24 +72,22 @@ export default function BottomNav() {
             key={item.href}
             href={item.href}
             style={{
-              width: "100%",
               textDecoration: "none",
-              color: active ? "#18b6ff" : "#ffffff",
+              color: active ? "#19c2ff" : "#ffffff",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              justifyContent: "center",
-              padding: "28px 0",
-              borderBottom: "1px solid #17233b",
-              transition: "0.3s",
+              padding: "18px 0",
+              transition: ".3s",
+              background: active
+                ? "rgba(25,194,255,.12)"
+                : "transparent",
             }}
           >
             <div
               style={{
-                fontSize: "38px",
-                marginBottom: "10px",
                 filter: active
-                  ? "drop-shadow(0 0 10px #18b6ff)"
+                  ? "drop-shadow(0 0 10px #19c2ff)"
                   : "none",
               }}
             >
@@ -80,9 +96,9 @@ export default function BottomNav() {
 
             <span
               style={{
-                fontSize: "18px",
-                fontWeight: 600,
-                color: active ? "#18b6ff" : "#ffffff",
+                marginTop: "8px",
+                fontSize: "14px",
+                fontWeight: "bold",
               }}
             >
               {item.name}
@@ -90,6 +106,7 @@ export default function BottomNav() {
           </Link>
         );
       })}
-    </div>
+    </aside>
   );
 }
+
