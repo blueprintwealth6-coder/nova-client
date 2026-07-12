@@ -1,9 +1,10 @@
 import React from 'react';
+import Logo from '@/components/Logo';
 
 export default function HomePage() {
   return (
     <>
-      {/* NAVIGATION BAR */}
+      {/* NAVIGATION BAR WITH LOGO */}
       <header style={{
         display: 'flex',
         justifyContent: 'space-between',
@@ -17,16 +18,9 @@ export default function HomePage() {
         zIndex: 1000,
         borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
       }}>
-        <div style={{
-          fontSize: '28px',
-          fontWeight: 800,
-          letterSpacing: '2px',
-          background: 'linear-gradient(to right, #00d2ff, #0066ff)',
-          WebkitBackgroundClip: 'text',
-          WebkitTextFillColor: 'transparent'
-        }}>
-          NOVA
-        </div>
+        {/* Naya Dynamic Logo */}
+        <Logo /> 
+
         <nav>
           <a href="#" style={{ color: '#cbd5e1', textDecoration: 'none', marginLeft: '30px', fontWeight: 500 }}>Home</a>
           <a href="#" style={{ color: '#cbd5e1', textDecoration: 'none', marginLeft: '30px', fontWeight: 500 }}>Trending</a>
