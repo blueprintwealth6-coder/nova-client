@@ -56,12 +56,7 @@ export default function HomePage() {
         
         {/* BUTTONS */}
         <div style={{ display: 'flex', gap: '20px', marginBottom: '60px' }}>
-          <a href="#" style={{
-            padding: '14px 32px', fontSize: '16px', fontWeight: 600, borderRadius: '50px', textDecoration: 'none',
-            background: 'linear-gradient(45deg, #00d2ff, #0066ff)', color: 'white', boxShadow: '0 4px 15px rgba(0, 210, 255, 0.4)'
-          }}>
-            ► Start Watching
-          </a>
+          
           <a href="#" style={{
             padding: '14px 32px', fontSize: '16px', fontWeight: 600, borderRadius: '50px', textDecoration: 'none',
             background: 'transparent', color: 'white', border: '2px solid rgba(255, 255, 255, 0.2)'
