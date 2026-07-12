@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link'; // Naya component routing ke liye
 import Logo from '@/components/Logo';
 
 export default function HomePage() {
@@ -22,10 +23,10 @@ export default function HomePage() {
         <Logo /> 
 
         <nav>
-          <a href="#" style={{ color: '#cbd5e1', textDecoration: 'none', marginLeft: '30px', fontWeight: 500 }}>Home</a>
-          <a href="#" style={{ color: '#cbd5e1', textDecoration: 'none', marginLeft: '30px', fontWeight: 500 }}>Trending</a>
-          <a href="#" style={{ color: '#cbd5e1', textDecoration: 'none', marginLeft: '30px', fontWeight: 500 }}>Creators</a>
-          <a href="#" style={{ color: '#cbd5e1', textDecoration: 'none', marginLeft: '30px', fontWeight: 500 }}>About</a>
+          <Link href="/" style={{ color: '#cbd5e1', textDecoration: 'none', marginLeft: '30px', fontWeight: 500 }}>Home</Link>
+          <Link href="/trending" style={{ color: '#cbd5e1', textDecoration: 'none', marginLeft: '30px', fontWeight: 500 }}>Trending</Link>
+          <Link href="/creators" style={{ color: '#cbd5e1', textDecoration: 'none', marginLeft: '30px', fontWeight: 500 }}>Creators</Link>
+          <Link href="/about" style={{ color: '#cbd5e1', textDecoration: 'none', marginLeft: '30px', fontWeight: 500 }}>About</Link>
         </nav>
       </header>
 
@@ -54,21 +55,20 @@ export default function HomePage() {
           Watch millions of amazing short videos, upload your own creative content, connect with top creators, and grow your global audience on NOVA.
         </p>
         
-        {/* BUTTONS */}
+        {/* BUTTONS WITH FIXED ROUTING LINKS */}
         <div style={{ display: 'flex', gap: '20px', marginBottom: '60px' }}>
-          
-          <a href="#" style={{
+          <Link href="/login" style={{
             padding: '14px 32px', fontSize: '16px', fontWeight: 600, borderRadius: '50px', textDecoration: 'none',
             background: 'transparent', color: 'white', border: '2px solid rgba(255, 255, 255, 0.2)'
           }}>
             Login
-          </a>
-          <a href="#" style={{
+          </Link>
+          <Link href="/signup" style={{
             padding: '14px 32px', fontSize: '16px', fontWeight: 600, borderRadius: '50px', textDecoration: 'none',
             background: 'white', color: 'black'
           }}>
             Sign Up
-          </a>
+          </Link>
         </div>
 
         {/* STATS COUNTER */}
