@@ -19,12 +19,16 @@ interface Video {
 export default function FeedPage() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
+  
+
+
 
   useEffect(() => {
     const fetchGlobalFeed = async () => {
       try {
         // Puray feed ki videos lane ke liye backend api route ko target kiya hai
-        const res = await API.get("/videos");
+        const res = await API.get("/videos/feed");
+
         
         // Agar response array hai toh store karein, warna data key check karein
         if (Array.isArray(res.data)) {
