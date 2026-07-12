@@ -6,14 +6,12 @@ import Link from "next/link";
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isInstallable, setIsInstallable] = useState(false);
 
-  // Download App ka event catch karne ke liye useEffect
+  // Background me download event ko capture karne ke liye
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
-      setIsInstallable(true);
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
@@ -24,15 +22,17 @@ export default function Navbar() {
   }, []);
 
   const handleDownloadClick = async () => {
-    if (!deferredPrompt) return;
-    
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    
-    if (outcome === "accepted") {
-      setIsInstallable(false);
+    // Agar browser ka system prompt ready hai toh use chalayein
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") {
+        setDeferredPrompt(null);
+      }
+    } else {
+      // Agar direct system prompt nahi chalta (jaise iOS/Safari pe), toh user ko guide karein
+      alert("App download karne ke liye browser menu (3 dots ya share button) par ja kar 'Install App' ya 'Add to Home Screen' par click karein.");
     }
-    setDeferredPrompt(null);
   };
 
   return (
@@ -44,7 +44,7 @@ export default function Navbar() {
           </h1>
         </Link>
 
-        {/* Desktop Menu */}
+        {/* Desktop Menu Links */}
         <div className="hidden lg:flex items-center gap-10 text-gray-300">
           <Link href="/" className="hover:text-cyan-400 transition">
             Home
@@ -67,17 +67,16 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Desktop Buttons & Download Button */}
+        {/* Desktop Action Buttons */}
         <div className="hidden lg:flex items-center gap-4">
-          {/* Custom Download Button (Sirf tab dikhega jab website downloadable hogi) */}
-          {isInstallable && (
-            <button
-              onClick={handleDownloadClick}
-              className="border border-cyan-400 text-cyan-400 hover:bg-cyan-400/10 px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
-            >
-              Download App
-            </button>
-          )}
+          
+          {/* Hamesha Dikhne Wala Download Button */}
+          <button
+            onClick={handleDownloadClick}
+            className="border border-cyan-400 text-cyan-400 hover:bg-cyan-400/10 px-5 py-2.5 rounded-xl font-bold text-sm transition-all"
+          >
+            Download App
+          </button>
 
           <Link href="/login">
             <button className="bg-cyan-500 hover:bg-cyan-400 px-6 py-3 rounded-xl font-bold transition text-black">
@@ -92,7 +91,7 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Menu Button (Hamburger) */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="lg:hidden text-3xl text-white"
@@ -101,7 +100,7 @@ export default function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Sidebar Dropdown */}
       {menuOpen && (
         <div className="lg:hidden bg-[#0b1020] border-t border-white/10">
           <div className="flex flex-col p-6 gap-5 text-gray-300">
@@ -111,20 +110,18 @@ export default function Navbar() {
             <Link href="/upload" onClick={() => setMenuOpen(false)}>Upload</Link>
             <Link href="/profile" onClick={() => setMenuOpen(false)}>Profile</Link>
 
-            {/* Mobile Download Button */}
-            {isInstallable && (
-              <button
-                onClick={() => {
-                  handleDownloadClick();
-                  setMenuOpen(false);
-                }}
-                className="border border-cyan-400 text-cyan-400 rounded-xl py-3 w-full font-bold"
-              >
-                Download App
-              </button>
-            )}
+            {/* Mobile View Download Button */}
+            <button
+              onClick={() => {
+                handleDownloadClick();
+                setMenuOpen(false);
+              }}
+              className="border border-cyan-400 text-cyan-400 rounded-xl py-3 w-full font-bold text-center"
+            >
+              Download App
+            </button>
 
-<Link href="/login" onClick={() => setMenuOpen(false)}>
+            <Link href="/login" onClick={() => setMenuOpen(false)}>
               <button className="bg-cyan-500 text-black font-bold rounded-xl py-3 w-full">
                 Login
               </button>
