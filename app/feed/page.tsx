@@ -26,15 +26,21 @@ export default function FeedPage() {
   useEffect(() => {
     const fetchGlobalFeed = async () => {
       try {
-        // Puray feed ki videos lane ke liye backend api route ko target kiya hai
         const res = await API.get("/videos/feed");
-
         
-        // Agar response array hai toh store karein, warna data key check karein
+        // Yeh line browser console me backend ka asli data dikhayegi
+        console.log("Backend Response:", res.data);
+        
         if (Array.isArray(res.data)) {
           setVideos(res.data);
         } else if (res.data && Array.isArray(res.data.videos)) {
           setVideos(res.data.videos);
+        } else if (res.data && Array.isArray(res.data.data)) {
+          // Agar data key ke andar array ho (e.g. { success: true, data: [...] })
+          setVideos(res.data.data);
+        } else if (res.data && Array.isArray(res.data.feed)) {
+          // Agar feed key ke andar array ho
+          setVideos(res.data.feed);
         }
       } catch (err) {
         console.error("Feed lane me masla hua:", err);
@@ -45,6 +51,7 @@ export default function FeedPage() {
 
     fetchGlobalFeed();
   }, []);
+
 
   if (loading) {
     return (
