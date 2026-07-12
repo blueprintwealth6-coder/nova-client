@@ -3,7 +3,7 @@ import "./globals.css";
 
 import Sidebar from "../components/Sidebar";
 export const metadata: Metadata = {
-  title: "NOVA - Aapka Title Yahan",
+  title: "NOVA - THE FUTRE SOCIAL MEDIA PLATEFOAM,
   description: "NOVA Social Media Platform",
   verification: {
     google: "ZGQmQY8h6bc2hMmkGc8qT1bbWc8PyM_OFlJMrlLazhI",
