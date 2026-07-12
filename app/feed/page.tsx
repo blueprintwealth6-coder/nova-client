@@ -1,108 +1,60 @@
 "use client";
 
-import React from 'react';
-import Sidebar from '@/components/Sidebar'; // Sidebar import kiya
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
+import { useEffect, useState } from "react";
+import API from "@/lib/api";
+
+interface Video {
+  _id: string;
+  title: string;
+  videoUrl: string;
+  description?: string;
+}
 
 export default function FeedPage() {
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        // Apne backend ke sahi videos wale route ke mutabik badlein (e.g., /videos ya /feed)
+        const res = await API.get("/videos"); 
+        setVideos(res.data);
+      } catch (err) {
+        console.error("Videos lane me masla hua:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
+
+  if (loading) {
+    return <div className="text-white text-center p-10">Loading Feed...</div>;
+  }
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#0b0f19' }}>
-      
-      {/* 1. Left side par aapka sidebar dikhega */}
-      <Sidebar />
+    <div className="bg-black min-h-screen text-white p-6 pt-24">
+      <h1 className="text-2xl font-bold mb-6">Video Feed</h1>
 
-      {/* 2. Right side par aapka main Feed content block */}
-      <main style={{ 
-        marginLeft: '260px', // Takki content sidebar ke pichay na chupe
-        flex: 1, 
-        padding: '40px',
-        color: '#ffffff' 
-      }}>
-        <h1 style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '20px' }}>Video Feed</h1>
-        
-        {/* Yahan aapka baki ka video layout ya feeds ka code ayega */}
-        <p style={{ color: '#94a3b8' }}>Videos coming soon...</p>
-
-      </main>
-      {/* FLOATING NAVIGATION BUTTONS ON RIGHT SIDE */}
-<div style={{
-  position: 'fixed',
-  right: '40px',
-  top: '50%',
-  transform: 'translateY(-50%)',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '15px',
-  zIndex: 1000
-}}>
-  {/* UP BUTTON */}
-  <button 
-    onClick={() => window.scrollBy({ top: -window.innerHeight, behavior: 'smooth' })}
-    style={{
-      width: '50px',
-      height: '50px',
-      borderRadius: '50%',
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-      border: '1px solid rgba(255, 255, 255, 0.2)',
-      color: '#ffffff',
-      fontSize: '22px',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backdropFilter: 'blur(10px)',
-      transition: 'all 0.2s ease',
-      boxShadow: '0 4px 15px rgba(0,0,0,0.3)'
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.backgroundColor = '#00d2ff';
-      e.currentTarget.style.borderColor = '#00d2ff';
-      e.currentTarget.style.transform = 'scale(1.1)';
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-      e.currentTarget.style.transform = 'scale(1)';
-    }}
-  >
-    ↑
-  </button>
-
-  {/* DOWN BUTTON */}
-  <button 
-    onClick={() => window.scrollBy({ top: window.innerHeight, behavior: 'smooth' })}
-    style={{
-      width: '50px',
-      height: '50px',
-      borderRadius: '50%',
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-      border: '1px solid rgba(255, 255, 255, 0.2)',
-      color: '#ffffff',
-      fontSize: '22px',
-      cursor: 'pointer',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backdropFilter: 'blur(10px)',
-      transition: 'all 0.2s ease',
-      boxShadow: '0 4px 15px rgba(0,0,0,0.3)'
-    }}
-    onMouseEnter={(e) => {
-      e.currentTarget.style.backgroundColor = '#0066ff';
-      e.currentTarget.style.borderColor = '#0066ff';
-      e.currentTarget.style.transform = 'scale(1.1)';
-    }}
-    onMouseLeave={(e) => {
-      e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
-      e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-      e.currentTarget.style.transform = 'scale(1)';
-    }}
-  >
-    ↓
-  </button>
-</div>
-
+      {videos.length === 0 ? (
+        <p className="text-gray-400">Abhi tak koi video upload nahi hui.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {videos.map((video) => (
+            <div key={video._id} className="bg-[#111] p-4 rounded-xl border border-white/10">
+              <video 
+                src={video.videoUrl} 
+                controls 
+                className="w-full aspect-video rounded-lg bg-black"
+              />
+              <h2 className="mt-3 font-bold text-lg">{video.title}</h2>
+              {video.description && <p className="text-sm text-gray-400 mt-1">{video.description}</p>}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
