@@ -1,3 +1,5 @@
+"use client";
+
 import React from 'react';
 import Sidebar from '@/components/Sidebar'; // Sidebar import kiya
 export const dynamic = "force-dynamic";
