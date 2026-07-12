@@ -2,11 +2,15 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 import Sidebar from "../components/Sidebar";
-
 export const metadata: Metadata = {
-  title: "NOVA",
+  title: "NOVA - Aapka Title Yahan",
   description: "NOVA Social Media Platform",
+  verification: {
+    google: "ZGQmQY8h6bc2hMmkGc8qT1bbWc8PyM_OFlJMrlLazhI",
+  },
 };
+
+
 
 export default function RootLayout({
   children,
