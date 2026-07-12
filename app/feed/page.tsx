@@ -24,7 +24,7 @@ export default function FeedPage() {
     const fetchGlobalFeed = async () => {
       try {
         // Aapke backend route ke mutabik sahi endpoint /videos/feed hit kiya hai
-        const res = await API.get("/video/feed");
+        const res = await API.get("/video/feed?v=fresh_deploy");
 
         
         // Browser console me data check karne ke liye log
