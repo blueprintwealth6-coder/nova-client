@@ -1,33 +1,29 @@
-"use client";
+import type { Metadata } from "next";
+import "./globals.css"; // Ensure your global styles are imported here
 
-import { usePathname } from "next/navigation";
-import "./globals.css";
-import Sidebar from "../components/Sidebar";
+export const metadata: Metadata = {
+  title: "NOVA - The Future of Short Videos",
+  description: "Watch millions of amazing short videos on NOVA.",
+};
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
-  const pathname = usePathname();
-  
-  // Agar user homepage "/" par hai toh sidebar nahi dikhega
-  const showSidebar = pathname !== "/"; 
-
+}>) {
   return (
     <html lang="en">
-      <body>
-        <div style={{ display: "flex", minHeight: "100vh" }}>
-          
-          {/* Sidebar sirf feed aur baaki pages par load hoga */}
-          {showSidebar && <Sidebar />}
-          
-          {/* Main area jahan aapki videos aur content load hota hai */}
-          <main style={{ flex: 1, width: "100%" }}>
-            {children}
-          </main>
-          
-        </div>
+      <body style={{
+        margin: 0,
+        padding: 0,
+        boxSizing: 'border-box',
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        background: "linear-gradient(135deg, #070b19 0%, #0f172a 50%, #1e3a8a 100%)",
+        color: "#ffffff",
+        minHeight: "100vh",
+        overflowX: "hidden"
+      }}>
+        {children}
       </body>
     </html>
   );
