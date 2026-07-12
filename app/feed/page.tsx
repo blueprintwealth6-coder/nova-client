@@ -1,5 +1,7 @@
 import React from 'react';
 import Sidebar from '@/components/Sidebar'; // Sidebar import kiya
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 
 export default function FeedPage() {
   return (
