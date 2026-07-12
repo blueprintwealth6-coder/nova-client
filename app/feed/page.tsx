@@ -19,27 +19,24 @@ interface Video {
 export default function FeedPage() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
-  
-
-
 
   useEffect(() => {
     const fetchGlobalFeed = async () => {
       try {
+        // Aapke backend route ke mutabik sahi endpoint /videos/feed hit kiya hai
         const res = await API.get("/videos/feed");
         
-        // Yeh line browser console me backend ka asli data dikhayegi
-        console.log("Backend Response:", res.data);
+        // Browser console me data check karne ke liye log
+        console.log("Backend Response Data:", res.data);
         
+        // Alag alag response object formats ko handle karne ke liye conditions
         if (Array.isArray(res.data)) {
           setVideos(res.data);
         } else if (res.data && Array.isArray(res.data.videos)) {
           setVideos(res.data.videos);
         } else if (res.data && Array.isArray(res.data.data)) {
-          // Agar data key ke andar array ho (e.g. { success: true, data: [...] })
           setVideos(res.data.data);
         } else if (res.data && Array.isArray(res.data.feed)) {
-          // Agar feed key ke andar array ho
           setVideos(res.data.feed);
         }
       } catch (err) {
@@ -51,7 +48,6 @@ export default function FeedPage() {
 
     fetchGlobalFeed();
   }, []);
-
 
   if (loading) {
     return (
@@ -79,17 +75,17 @@ export default function FeedPage() {
                 key={video._id} 
                 className="bg-[#111424] rounded-2xl border border-white/10 overflow-hidden hover:border-cyan-400/50 transition-all group flex flex-col justify-between"
               >
-                {/* Video Player Box */}
+                {/* Video Box */}
                 <div className="relative aspect-video bg-black w-full overflow-hidden">
                   <video 
                     src={video.videoUrl} 
                     controls 
                     className="w-full h-full object-cover"
-                    poster="/icon-512x512.png" // Fallback logo preview jab tak load na ho
+                    poster="/icon-512x512.png"
                   />
                 </div>
 
-                {/* Video Details Content */}
+                {/* Details Section */}
                 <div className="p-4 flex-1 flex flex-col justify-between">
                   <div>
                     <h2 className="font-bold text-lg text-white group-hover:text-cyan-400 transition line-clamp-1">
@@ -102,7 +98,7 @@ export default function FeedPage() {
                     )}
                   </div>
 
-                  {/* Creator Info Footer */}
+                  {/* Footer Stats */}
                   <div className="flex items-center justify-between mt-4 pt-3 border-t border-white/5 text-xs text-gray-400">
                     <span className="font-semibold text-pink-400">
                       @{video.user?.username || "creator"}
