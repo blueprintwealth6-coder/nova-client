@@ -27,7 +27,7 @@ export default function RootLayout({
           fontFamily: "Arial",
         }}
       >
-        <Sidebar />
+        
 
         <main
           style={{
